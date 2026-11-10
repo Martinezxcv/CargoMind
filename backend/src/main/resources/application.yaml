@@ -33,3 +33,18 @@ gemini:
     key: ${GEMINI_API_KEY:}
     model: gemini-2.0-flash
     url: https://generativelanguage.googleapis.com/v1beta/models
+
+# Scoring engine: business parameters, tunable without recompiling
+scoring:
+  weights:            # must sum to 1.0 (validated at startup)
+    route: 0.30
+    proximity: 0.20
+    profit: 0.30
+    vehicle: 0.15
+    deadline: 0.05
+  thresholds:
+    route-zero-at-km: 500           # offer ends >= 500 km from home -> 0 pts
+    proximity-zero-at-km: 300       # deadhead >= 300 km -> 0 pts
+    operating-cost-per-km: 1.00     # EUR, MVP assumption
+    full-margin-per-km: 0.60        # margin/km worth 100 pts
+    deadline-penalty-per-day: 25    # points lost per day of waiting
