@@ -17,6 +17,10 @@ spring:
     init:
       mode: always
 
+  h2:
+    console:
+      enabled: true
+
   jackson:
     mapper:
       accept-case-insensitive-enums: true
