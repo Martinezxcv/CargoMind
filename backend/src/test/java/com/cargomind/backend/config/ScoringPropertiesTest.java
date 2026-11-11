@@ -17,7 +17,7 @@ class ScoringPropertiesTest {
         ScoringProperties.Thresholds thresholds = ScoringProperties.defaults().thresholds();
 
         assertThatThrownBy(() -> new ScoringProperties(
-                new ScoringProperties.Weights(0.5, 0.5, 0.5, 0.0, 0.0), thresholds))
+                new ScoringProperties.Weights(0.5, 0.5, 0.5, 0.0, 0.0), thresholds, 5))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("must sum to 1.0");
     }

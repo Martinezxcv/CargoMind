@@ -101,7 +101,8 @@ class ScoringEngineServiceTest {
     void customWeights_changeTheResult() {
         ScoringProperties onlyDeadline = new ScoringProperties(
                 new ScoringProperties.Weights(0, 0, 0, 0, 1.0),
-                ScoringProperties.defaults().thresholds());
+                ScoringProperties.defaults().thresholds(),
+                5);
         ScoringEngineService custom = new ScoringEngineService(new GeoService(), onlyDeadline);
 
         CargoOffer offer = offer(berlin, warsaw, ContainerType.TRUCK_24T, 18_000, "1.45", TODAY);

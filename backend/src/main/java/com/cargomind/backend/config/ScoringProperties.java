@@ -1,11 +1,9 @@
 package com.cargomind.backend.config;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -16,7 +14,8 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "scoring")
 public record ScoringProperties(
         @NotNull @Valid Weights weights,
-        @NotNull @Valid Thresholds thresholds
+        @NotNull @Valid Thresholds thresholds,
+        @Positive @Max(50) @DefaultValue("5") int maxResults
 ) {
 
     private static final double WEIGHT_SUM_TOLERANCE = 0.0001;
@@ -55,6 +54,7 @@ public record ScoringProperties(
     public static ScoringProperties defaults() {
         return new ScoringProperties(
                 new Weights(0.30, 0.20, 0.30, 0.15, 0.05),
-                new Thresholds(500.0, 300.0, 1.00, 0.60, 25.0));
+                new Thresholds(500.0, 300.0, 1.00, 0.60, 25.0),
+        5);
     }
 }
