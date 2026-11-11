@@ -11,21 +11,8 @@
 	<groupId>com.cargomind</groupId>
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<name>CargoMind Backend</name>
+	<description>Ghost Cargo Engine</description>
 	<properties>
 		<java.version>25</java.version>
 	</properties>

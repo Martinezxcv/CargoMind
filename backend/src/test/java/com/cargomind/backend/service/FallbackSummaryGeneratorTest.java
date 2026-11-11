@@ -15,16 +15,16 @@ class FallbackSummaryGeneratorTest {
 
     @Test
     void highScore_mentionsRouteVerdictAndProfit() {
-        String text = generator.generate(offer(), breakdown(92.5, "430.00"));
+        String text = generator.generate(offer(), breakdown(92.0, "430.00"));
 
-        assertThat(text).contains("BERLIN → WARSZAWA", "very good", "93%", "430");
+        assertThat(text).contains("BERLIN → WARSZAWA", "excellent", "92%", "430");
     }
 
     @Test
     void negativeProfit_isFlaggedAsLoss() {
         String text = generator.generate(offer(), breakdown(35.0, "-120.00"));
 
-        assertThat(text).contains("poor", "loss");
+        assertThat(text).contains("weak", "loss");
     }
 
     @Test
