@@ -5,7 +5,6 @@ import com.cargomind.backend.dto.CargoSearchRequestDto;
 import com.cargomind.backend.service.CargoSearchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cargo")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class CargoOfferController {
 

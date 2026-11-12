@@ -2,10 +2,12 @@ package com.cargomind.backend.repository;
 
 import com.cargomind.backend.entity.CargoOffer;
 import com.cargomind.backend.enums.ContainerType;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CargoOfferRepository extends JpaRepository<CargoOffer, Long> {
 
@@ -15,4 +17,12 @@ public interface CargoOfferRepository extends JpaRepository<CargoOffer, Long> {
 
     @EntityGraph(attributePaths = {"origin", "destination"})
     List<CargoOffer> findAll();
+
+    @EntityGraph(attributePaths = {"origin", "destination"})
+    List<CargoOffer> findAllByOrderByPickupDateAscIdAsc();
+
+    // Overridden only to attach the entity graph (cities are always needed for the DTO)
+    @Override
+    @EntityGraph(attributePaths = {"origin", "destination"})
+    Optional<CargoOffer> findById(Long id);
 }

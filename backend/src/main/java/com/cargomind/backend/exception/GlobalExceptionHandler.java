@@ -37,4 +37,14 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
                 "Malformed request body (check containerType value and date format YYYY-MM-DD)");
     }
+
+    @ExceptionHandler(OfferNotFoundException.class)
+    public ProblemDetail handleOfferNotFound(OfferNotFoundException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidOfferException.class)
+    public ProblemDetail handleInvalidOffer(InvalidOfferException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 }

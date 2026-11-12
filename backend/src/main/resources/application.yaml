@@ -31,9 +31,9 @@ server:
 gemini:
   api:
     key: ${GEMINI_API_KEY:}
-    model: gemini-2.0-flash
+    model: gemini-3.1-flash-lite
     url: https://generativelanguage.googleapis.com/v1beta/models
-    timeout-seconds: 8
+    timeout-seconds: 20
 
 # Scoring engine: business parameters, tunable without recompiling
 scoring:
@@ -50,3 +50,7 @@ scoring:
     full-margin-per-km: 0.60        # margin/km worth 100 pts
     deadline-penalty-per-day: 25    # points lost per day of waiting
   max-results: 5
+
+cors:
+  allowed-origins:
+    - "http://localhost:5173"
