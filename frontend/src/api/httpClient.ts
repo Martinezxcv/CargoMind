@@ -33,6 +33,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
         if (!response.ok) {
             throw await toApiError(response)
         }
+        if (response.status === 204) {
+            return undefined as T // DELETE returns no body
+        }
         return (await response.json()) as T
     } catch (error) {
         console.error(`API call ${path} failed:`, error)
@@ -44,13 +47,17 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     }
 }
 
+function withJsonBody<B>(method: 'POST' | 'PUT', body: B): RequestInit {
+    return {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    }
+}
+
 export const http = {
     get: <T>(path: string): Promise<T> => request<T>(path),
-
-    post: <T, B>(path: string, body: B): Promise<T> =>
-        request<T>(path, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-        }),
+    post: <T, B>(path: string, body: B): Promise<T> => request<T>(path, withJsonBody('POST', body)),
+    put: <T, B>(path: string, body: B): Promise<T> => request<T>(path, withJsonBody('PUT', body)),
+    delete: (path: string): Promise<void> => request<void>(path, { method: 'DELETE' }),
 }
