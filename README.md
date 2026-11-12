@@ -5,9 +5,7 @@ truck is, where it wants to go home and what vehicle it has. The system finds ca
 back, scores each one (0–100%) and explains the result in two plain sentences.
 
 ## 🚀 Demo
-<p align="center">
-  <video src="demo.mp4" width="100%" autoplay loop muted playsinline controls></video>
-</p>
+https://github.com/user-attachments/assets/fd14fd5d-3e5f-4a0b-914a-5ef684de1b6e
 
 **Hybrid architecture**
 
