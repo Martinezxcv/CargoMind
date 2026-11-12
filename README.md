@@ -4,6 +4,11 @@ CargoMind AI helps TSL carriers avoid empty return trips ("ghost cargo"). The ca
 truck is, where it wants to go home and what vehicle it has. The system finds cargo offers on the way
 back, scores each one (0–100%) and explains the result in two plain sentences.
 
+## 🚀 Demo
+<p align="center">
+  <video src="demo.mp4" width="100%" autoplay loop muted playsinline controls></video>
+</p>
+
 **Hybrid architecture**
 
 1. **Deterministic scoring engine (Java)** computes the match score. It is the single source of truth.
