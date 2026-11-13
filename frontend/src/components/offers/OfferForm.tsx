@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import type { SyntheticEvent } from 'react'
-import { CONTAINER_LABELS, CONTAINER_TYPES } from '../../constants/containerTypes'
+import type { ReactNode, SyntheticEvent } from 'react'
+import {CONTAINER_LABELS, CONTAINER_TYPES, DEFAULT_PAYLOAD_KG} from '../../constants/containerTypes'
 import type { ContainerType } from '../../types/cargo'
 import type { City } from '../../types/city'
 import type { CargoOffer, CargoOfferInput } from '../../types/offer'
 import { defaultCity } from '../../utils/cities'
 import { todayIso } from '../../utils/format'
+import Button from '../common/Button'
+import Card from '../common/Card'
 import CitySelect from '../search/CitySelect'
 import { inputClass } from '../search/fieldStyles'
 import FormField from '../search/FormField'
@@ -18,6 +20,15 @@ interface OfferFormProps {
     onCancel: () => void
 }
 
+function FormSection({ title, children }: { title: string; children: ReactNode }) {
+    return (
+        <div className="p-6">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</h3>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
+        </div>
+    )
+}
+
 export default function OfferForm({ cities, initial, saving, onSubmit, onCancel }: OfferFormProps) {
     const [origin, setOrigin] = useState(() => initial?.origin ?? defaultCity(cities, 'BERLIN'))
     const [destination, setDestination] = useState(
@@ -26,6 +37,7 @@ export default function OfferForm({ cities, initial, saving, onSubmit, onCancel 
     const [containerType, setContainerType] = useState<ContainerType>(
         initial?.containerType ?? 'TRUCK_24T',
     )
+    const maxWeightForVehicle = DEFAULT_PAYLOAD_KG[containerType]
     // Numeric fields are strings so the user can clear them and type freely
     const [cargoWeightKg, setCargoWeightKg] = useState(initial ? String(initial.cargoWeightKg) : '')
     const [pricePerKm, setPricePerKm] = useState(initial ? initial.pricePerKm.toFixed(2) : '')
@@ -52,111 +64,127 @@ export default function OfferForm({ cities, initial, saving, onSubmit, onCancel 
     }
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="grid gap-4 rounded-lg bg-white p-6 shadow sm:grid-cols-2 lg:grid-cols-3"
-        >
-            <h2 className="text-lg font-semibold text-slate-900 sm:col-span-2 lg:col-span-3">
-                {initial ? `Edit offer #${initial.id}` : 'New offer'}
-            </h2>
+        <Card className="overflow-hidden">
+            <form onSubmit={handleSubmit} className="divide-y divide-slate-100">
+                <div className="p-6">
+                    <h2 className="text-lg font-semibold text-slate-900">
+                        {initial ? `Edit offer #${initial.id}` : 'New offer'}
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                        {initial
+                            ? 'Update the details below and save your changes.'
+                            : 'Publish a cargo that carriers can pick up on their way back.'}
+                    </p>
+                </div>
 
-            <CitySelect label="Pickup city (origin)" value={origin} cities={cities} onChange={setOrigin} />
-            <CitySelect
-                label="Delivery city (destination)"
-                value={destination}
-                cities={cities}
-                onChange={setDestination}
-            />
+                <FormSection title="Route">
+                    <CitySelect
+                        label="Pickup city (origin)"
+                        value={origin}
+                        cities={cities}
+                        onChange={setOrigin}
+                    />
+                    <CitySelect
+                        label="Delivery city (destination)"
+                        value={destination}
+                        cities={cities}
+                        onChange={setDestination}
+                    />
+                </FormSection>
 
-            <FormField label="Required vehicle type">
-                <select
-                    className={inputClass}
-                    value={containerType}
-                    onChange={(e) => setContainerType(e.target.value as ContainerType)}
-                >
-                    {CONTAINER_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                            {CONTAINER_LABELS[type]}
-                        </option>
-                    ))}
-                </select>
-            </FormField>
+                <FormSection title="Cargo">
+                    <FormField label="Required vehicle type">
+                        <select
+                            className={inputClass}
+                            value={containerType}
+                            onChange={(e) => {
+                                const newType = e.target.value as ContainerType
+                                setContainerType(newType)
 
-            <FormField label="Cargo weight (kg)">
-                <input
-                    type="number"
-                    inputMode="numeric"
-                    min={1}
-                    max={100000}
-                    step={1}
-                    required
-                    className={inputClass}
-                    value={cargoWeightKg}
-                    onChange={(e) => setCargoWeightKg(e.target.value)}
-                />
-            </FormField>
+                                const newMax = DEFAULT_PAYLOAD_KG[newType]
+                                if (Number(cargoWeightKg) > newMax) {
+                                    setCargoWeightKg(newMax.toString())
+                                }
+                            }}
+                        >
+                            {CONTAINER_TYPES.map((type) => (
+                                <option key={type} value={type}>
+                                    {CONTAINER_LABELS[type]}
+                                </option>
+                            ))}
+                        </select>
+                    </FormField>
 
-            <FormField label="Rate (EUR per km)">
-                <input
-                    type="number"
-                    inputMode="decimal"
-                    min={0.01}
-                    max={999.99}
-                    step={0.01}
-                    required
-                    className={inputClass}
-                    value={pricePerKm}
-                    onChange={(e) => setPricePerKm(e.target.value)}
-                />
-            </FormField>
+                    <FormField
+                        label="Cargo weight (kg)"
+                        hint={`Between 1 and ${maxWeightForVehicle.toLocaleString()} kg for selected vehicle`}
+                    >
+                        <input
+                            type="number"
+                            inputMode="numeric"
+                            min={1}
+                            max={maxWeightForVehicle}
+                            step={1}
+                            required
+                            className={inputClass}
+                            value={cargoWeightKg}
+                            onChange={(e) => setCargoWeightKg(e.target.value)}
+                        />
+                    </FormField>
 
-            <FormField label="Pickup date">
-                <input
-                    type="date"
-                    required
-                    min={todayIso()}
-                    className={inputClass}
-                    value={pickupDate}
-                    onChange={(e) => setPickupDate(e.target.value)}
-                />
-            </FormField>
+                    <FormField label="Rate (EUR per km)" hint="Up to 2 decimal places">
+                        <input
+                            type="number"
+                            inputMode="decimal"
+                            min={0.01}
+                            max={999.99}
+                            step={0.01}
+                            required
+                            className={inputClass}
+                            value={pricePerKm}
+                            onChange={(e) => setPricePerKm(e.target.value)}
+                        />
+                    </FormField>
+                </FormSection>
 
-            <FormField label="Company name">
-                <input
-                    type="text"
-                    required
-                    maxLength={100}
-                    className={inputClass}
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                />
-            </FormField>
+                <FormSection title="Schedule and company">
+                    <FormField label="Pickup date">
+                        <input
+                            type="date"
+                            required
+                            min={todayIso()}
+                            className={inputClass}
+                            value={pickupDate}
+                            onChange={(e) => setPickupDate(e.target.value)}
+                        />
+                    </FormField>
 
-            {localError && (
-                <p role="alert" className="text-sm text-rose-600 sm:col-span-2 lg:col-span-3">
-                    {localError}
-                </p>
-            )}
+                    <FormField label="Company name">
+                        <input
+                            type="text"
+                            required
+                            maxLength={100}
+                            className={inputClass}
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                        />
+                    </FormField>
+                </FormSection>
 
-            <div className="flex gap-3 sm:col-span-2 lg:col-span-3">
-                <button
-                    type="submit"
-                    disabled={saving}
-                    className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white
-                     transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                    {saving ? 'Saving…' : initial ? 'Save changes' : 'Create offer'}
-                </button>
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    disabled={saving}
-                    className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700
-                     transition hover:bg-slate-50 disabled:opacity-60"
-                >
-                    Cancel
-                </button>
-            </div>
-        </form>
+                <div className="flex flex-wrap items-center justify-end gap-3 bg-slate-50 px-6 py-4">
+                    {localError && (
+                        <p role="alert" className="mr-auto text-sm font-medium text-rose-600">
+                            {localError}
+                        </p>
+                    )}
+                    <Button variant="secondary" onClick={onCancel} disabled={saving}>
+                        Cancel
+                    </Button>
+                    <Button type="submit" loading={saving}>
+                        {saving ? 'Saving…' : initial ? 'Save changes' : 'Create offer'}
+                    </Button>
+                </div>
+            </form>
+        </Card>
     )
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ErrorAlert from './components/common/ErrorAlert'
+import Spinner from './components/common/Spinner'
 import Header from './components/layout/Header'
 import TabNav from './components/layout/TabNav'
 import type { Tab } from './components/layout/TabNav'
@@ -16,9 +17,13 @@ function App() {
             <Header />
             <TabNav active={tab} onChange={setTab} />
 
-            <main className="mx-auto max-w-5xl space-y-6 p-8">
+            <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-8">
                 {error && <ErrorAlert message={error} />}
-                {!cities && !error && <p className="text-slate-500">Loading data…</p>}
+                {!cities && !error && (
+                    <div className="flex items-center gap-2 text-slate-500">
+                        <Spinner /> Loading data…
+                    </div>
+                )}
 
                 {cities && (
                     <>

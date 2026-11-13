@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { useOffers } from '../../hooks/useOffers'
 import type { City } from '../../types/city'
 import type { CargoOffer, CargoOfferInput } from '../../types/offer'
+import Button from '../common/Button'
 import ErrorAlert from '../common/ErrorAlert'
+import { PlusIcon } from '../common/Icons'
+import Spinner from '../common/Spinner'
 import OfferForm from './OfferForm'
 import OffersTable from './OffersTable'
 
@@ -29,17 +32,20 @@ export default function OffersPage({ cities }: OffersPageProps) {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">My offers</h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 className="text-lg font-semibold text-slate-900">
+                        My offers
+                        {offers && (
+                            <span className="ml-2 text-sm font-normal text-slate-400">({offers.length})</span>
+                        )}
+                    </h2>
+                    <p className="text-sm text-slate-500">Cargo offers that carriers can find and score.</p>
+                </div>
                 {mode.kind === 'closed' && (
-                    <button
-                        type="button"
-                        onClick={() => setMode({ kind: 'create' })}
-                        className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-white
-                       transition hover:bg-emerald-600"
-                    >
-                        + New offer
-                    </button>
+                    <Button icon={<PlusIcon />} onClick={() => setMode({ kind: 'create' })}>
+                        New offer
+                    </Button>
                 )}
             </div>
 
@@ -65,7 +71,11 @@ export default function OffersPage({ cities }: OffersPageProps) {
                     onDelete={handleDelete}
                 />
             ) : (
-                !error && <p className="text-slate-500">Loading offers…</p>
+                !error && (
+                    <div className="flex items-center gap-2 text-slate-500">
+                        <Spinner /> Loading offers…
+                    </div>
+                )
             )}
         </div>
     )
